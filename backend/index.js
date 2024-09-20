@@ -115,7 +115,6 @@ app.post("/login", async (req, res) => {
 
 //Get User
 app.get("/get-user", authenticateToken, async (req, res) => {
-  console.log(req.user);
   const { user } = req.user;
 
   const isUser = await User.findOne({ email: user.email });
