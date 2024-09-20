@@ -88,7 +88,7 @@ app.post("/login", async (req, res) => {
   const userInfo = await User.findOne({ email, password });
 
   if (!userInfo) {
-    return res.status(400).json({ message: "User not found" });
+    return res.status(400).json({ message: "Invalid Credentials" });
   }
 
   if (userInfo.email == email && userInfo.password == password) {
@@ -109,7 +109,7 @@ app.post("/login", async (req, res) => {
   } else {
     return res
       .status(400)
-      .json({ error: true, message: "Invalid Credentials" });
+      .json({ error: true, message: "User not found" });
   }
 });
 
