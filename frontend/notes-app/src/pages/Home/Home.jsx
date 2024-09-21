@@ -7,7 +7,6 @@ import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import axiosInstance from "../../../utils/axiosInstance";
-import moment from "moment";
 
 const Home = () => {
   const [openAddEditModal, setOpenAddEditModal] = useState({
@@ -19,6 +18,10 @@ const Home = () => {
   const [allNotes, setAllNotes] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
   const navigate = useNavigate();
+
+  const handleEdit = (noteDetails) => {
+    setOpenAddEditModal({ isShown: true, type: "edit", data: noteDetails });
+  };
 
   //Get User Info
   const getUserInfo = async () => {
@@ -99,6 +102,7 @@ const Home = () => {
           onClose={() => {
             setOpenAddEditModal({ isShown: false, type: "add", data: null });
           }}
+          getAllNotes={getAllNotes}
         />
       </Modal>
     </>
