@@ -15,11 +15,34 @@ const Home = () => {
     data: null,
   });
 
+  const [userInfo, setUserInfo] = useState(null);
+  const navigate = useNavigate();
 
+  //Get User Info
+  const getUserInfo = async () => {
+    try {
+      const response = await axiosInstance.get("/get-user");
+
+      if (response.data && response.data.user) {
+        setUserInfo(response.data.user);
+      }
+    } catch (error) {
+      if(error.response.status === 401){
+        localStorage.clear();
+        navigate("/login");
+      }
+    }
+  };
+
+  useEffect(() => {
+    getUserInfo();
+    return () => {};
+
+  }, []);
 
   return (
     <>
-      <Navbar />
+      <Navbar userInfo={userInfo} />
 
       <div className="container mx-auto">
         <div className="grid grid-cols-3 gap-4 mt-8">
@@ -53,8 +76,8 @@ const Home = () => {
         className="w-[40%] max-h-3/4 bg-white rounded-md mx-auto mt-14 p-4 overflow-scroll"
       >
         <AddEditNotes
-        type={openAddEditModal.type}
-        noteData={openAddEditModal.data}
+          type={openAddEditModal.type}
+          noteData={openAddEditModal.data}
           onClose={() => {
             setOpenAddEditModal({ isShown: false, type: "add", data: null });
           }}
