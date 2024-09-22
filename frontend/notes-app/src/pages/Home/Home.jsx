@@ -10,6 +10,7 @@ import axiosInstance from "../../../utils/axiosInstance";
 import Toast from "../../components/ToastMessage/Toast";
 import { all } from "axios";
 import EmptyCard from "../../components/EmptyCard/EmptyCard";
+import AddNotesImg from "../../assets/images/notes_15747214.png";
 
 const Home = () => {
   const [openAddEditModal, setOpenAddEditModal] = useState({
@@ -70,26 +71,25 @@ const Home = () => {
   };
 
   //Delete Note
-const deleteNote = async (data) => {
-  const noteId = data._id;
-  try {
-    const response = await axiosInstance.delete("/delete-note/" + noteId);
+  const deleteNote = async (data) => {
+    const noteId = data._id;
+    try {
+      const response = await axiosInstance.delete("/delete-note/" + noteId);
 
-    if (response.data && !response.data.error) {
-      showToastMessage("Note Deleted Successfully", "delete");
-      getAllNotes();
+      if (response.data && !response.data.error) {
+        showToastMessage("Note Deleted Successfully", "delete");
+        getAllNotes();
+      }
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        console.log("An unexpected error occurred. Please try again later.");
+      }
     }
-  } catch (error) {
-    if (
-      error.response &&
-      error.response.data &&
-      error.response.data.message
-    ) {
-      console.log("An unexpected error occurred. Please try again later.");
-    }
-  }
-};
-
+  };
 
   useEffect(() => {
     getAllNotes();
@@ -102,21 +102,28 @@ const deleteNote = async (data) => {
       <Navbar userInfo={userInfo} />
 
       <div className="container mx-auto">
-        {allNotes.length > 0 ? <div className="grid grid-cols-3 gap-4 mt-8">
-          {allNotes.map((item, index) => (
-            <NoteCard
-              key={item._id}
-              title={item.title}
-              date={item.createdOn}
-              content={item.content}
-              tags={item.tags}
-              isPinned={item.isPinned}
-              onEdit={() => handleEdit(item)}
-              onDelete={() => deleteNote(item)}
-              onPinNote={() => {}}
-            />
-          ))}
-        </div> : <EmptyCard />}
+        {allNotes.length > 0 ? (
+          <div className="grid grid-cols-3 gap-4 mt-8">
+            {allNotes.map((item, index) => (
+              <NoteCard
+                key={item._id}
+                title={item.title}
+                date={item.createdOn}
+                content={item.content}
+                tags={item.tags}
+                isPinned={item.isPinned}
+                onEdit={() => handleEdit(item)}
+                onDelete={() => deleteNote(item)}
+                onPinNote={() => {}}
+              />
+            ))}
+          </div>
+        ) : (
+          <EmptyCard
+            imgSrc={AddNotesImg}
+            message={`Start creating your first note! Click the "Add" button to jot down your thoughts, ideas and remainders. Let's get started!`}
+          />
+        )}
       </div>
 
       <button
