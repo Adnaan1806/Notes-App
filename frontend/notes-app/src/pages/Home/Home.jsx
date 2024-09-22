@@ -11,6 +11,7 @@ import Toast from "../../components/ToastMessage/Toast";
 import { all } from "axios";
 import EmptyCard from "../../components/EmptyCard/EmptyCard";
 import AddNotesImg from "../../assets/images/notes_15747214.png";
+import NoDataImg from "../../assets/images/no-data_17771138.png";
 
 const Home = () => {
   const [openAddEditModal, setOpenAddEditModal] = useState({
@@ -27,6 +28,8 @@ const Home = () => {
 
   const [allNotes, setAllNotes] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
+  const [isSearch, setIsSearch] = useState(false);
+
   const navigate = useNavigate();
 
   const handleEdit = (noteDetails) => {
@@ -91,6 +94,27 @@ const Home = () => {
     }
   };
 
+  //Search Notes
+  const onSearchNote = async (query) => {
+    try {
+      const response = await axiosInstance.get("/search-notes", {
+        params: { query },
+      });
+
+      if (response.data && response.data.notes) {
+        setIsSearch(true);
+        setAllNotes(response.data.notes);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setIsSearch(false);
+    getAllNotes();
+  };
+
   useEffect(() => {
     getAllNotes();
     getUserInfo();
@@ -99,7 +123,7 @@ const Home = () => {
 
   return (
     <>
-      <Navbar userInfo={userInfo} />
+      <Navbar userInfo={userInfo} onSearchNote={onSearchNote} handleClearSearch={handleClearSearch}/>
 
       <div className="container mx-auto">
         {allNotes.length > 0 ? (
@@ -120,8 +144,8 @@ const Home = () => {
           </div>
         ) : (
           <EmptyCard
-            imgSrc={AddNotesImg}
-            message={`Start creating your first note! Click the "Add" button to jot down your thoughts, ideas and remainders. Let's get started!`}
+            imgSrc={isSearch? NoDataImg: AddNotesImg}
+            message={isSearch? `Oops! No notes found matching your search.` : `Start creating your first note! Click the "Add" button to jot down your thoughts, ideas and remainders. Let's get started!`}
           />
         )}
       </div>
